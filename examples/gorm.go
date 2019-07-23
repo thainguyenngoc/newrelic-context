@@ -1,12 +1,12 @@
 package main
 
 import (
+	"bitbucket.org/snapmartinc/newrelic-context/nrgorm"
 	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"net/http"
 	nrcontext "newrelic-context"
-	"newrelic-context/nrgorm"
 )
 
 var db *gorm.DB

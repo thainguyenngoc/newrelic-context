@@ -1,9 +1,9 @@
 package nrcontext
 
 import (
+	"bitbucket.org/snapmartinc/newrelic-context/nrgorm"
+	"bitbucket.org/snapmartinc/newrelic-context/nrredis"
 	"context"
-	"newrelic-context/nrgorm"
-	"newrelic-context/nrredis"
 
 	"github.com/go-redis/redis"
 	"github.com/jinzhu/gorm"

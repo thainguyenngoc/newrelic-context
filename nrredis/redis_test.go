@@ -1,7 +1,7 @@
 package nrredis
 
 import (
-	"newrelic-context/nrmock"
+	"bitbucket.org/snapmartinc/newrelic-context/nrmock"
 	"os"
 	"testing"
 

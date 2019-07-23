@@ -1,11 +1,10 @@
 package nrcontext
 
 import (
+	"bitbucket.org/snapmartinc/newrelic-context/nrmock"
 	"net/http"
 	"net/http/httptest"
-	"newrelic-context/nrmock"
 	"testing"
-
 )
 
 func TestHandler(t *testing.T) {
