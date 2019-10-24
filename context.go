@@ -4,6 +4,7 @@ import (
 	"bitbucket.org/snapmartinc/newrelic-context/nrgorm"
 	"bitbucket.org/snapmartinc/newrelic-context/nrredis"
 	"context"
+	"fmt"
 
 	"github.com/go-redis/redis"
 	"github.com/jinzhu/gorm"
@@ -22,6 +23,7 @@ func ContextWithTxn(c context.Context, txn newrelic.Transaction) context.Context
 // Get NewRelic transaction from context anywhere
 func GetTnxFromContext(c context.Context) newrelic.Transaction {
 	if tnx := c.Value(txnKey); tnx != nil {
+		fmt.Println("transaction is not nill")
 		return tnx.(newrelic.Transaction)
 	}
 	return nil
