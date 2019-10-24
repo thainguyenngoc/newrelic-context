@@ -16,6 +16,7 @@ const (
 // SetTxnToGorm sets transaction to gorm settings, returns cloned DB
 func SetTxnToGorm(txn newrelic.Transaction, db *gorm.DB) *gorm.DB {
 	if txn == nil {
+		fmt.Println("newRelicTransactionNotFound")
 		return db
 	}
 	return db.Set(txnGormKey, txn)
@@ -80,7 +81,7 @@ func (c *callbacks) after(scope *gorm.Scope, operation string) {
 	if operation == "" {
 		operation = strings.ToUpper(strings.Split(scope.SQL, " ")[0])
 	}
-	segmentBuilder(
+	_ = segmentBuilder(
 		startTime.(newrelic.SegmentStartTime),
 		c.product,
 		scope.SQL,
