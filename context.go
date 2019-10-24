@@ -5,6 +5,7 @@ import (
 	"bitbucket.org/snapmartinc/newrelic-context/nrredis"
 	"context"
 	"fmt"
+	"net/http"
 
 	"github.com/go-redis/redis"
 	"github.com/jinzhu/gorm"
@@ -33,6 +34,17 @@ func GetTnxFromContext(c context.Context) newrelic.Transaction {
 func SetTxnToGorm(ctx context.Context, db *gorm.DB) *gorm.DB {
 	txn := GetTnxFromContext(ctx)
 	return nrgorm.SetTxnToGorm(txn, db)
+}
+
+func SetTnxToGormMiddleware(db *gorm.DB) func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ctx := r.Context()
+			txn := GetTnxFromContext(ctx)
+			db = nrgorm.SetTxnToGorm(txn, db)
+			next.ServeHTTP(w, r.WithContext(ctx))
+		})
+	}
 }
 
 // Gets transaction from Context and applies RedisWrapper, returns cloned client
