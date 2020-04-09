@@ -7,8 +7,12 @@ require (
 	github.com/alicebob/miniredis v2.5.0+incompatible
 	github.com/go-redis/redis v6.15.6+incompatible
 	github.com/go-redis/redis/v7 v7.2.0
+	github.com/go-redis/redis/v8 v8.0.0-alpha.1 // indirect
 	github.com/gomodule/redigo v2.0.0+incompatible // indirect
 	github.com/jinzhu/gorm v1.9.11
 	github.com/newrelic/go-agent v2.14.1+incompatible
 	github.com/yuin/gopher-lua v0.0.0-20190514113301-1cd887cd7036 // indirect
+	golang.org/x/lint v0.0.0-20190313153728-d0100b6bd8b3 // indirect
+	golang.org/x/tools v0.0.0-20190524140312-2c0ae7006135 // indirect
+	honnef.co/go/tools v0.0.0-20190523083050-ea95bdfd59fc // indirect
 )

@@ -2,7 +2,7 @@ package nrredis
 
 import (
 	"context"
-	"github.com/go-redis/redis/v7"
+	"github.com/go-redis/redis/v8"
 	newrelic "github.com/newrelic/go-agent"
 	"strings"
 )
