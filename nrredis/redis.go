@@ -1,9 +1,7 @@
 package nrredis
 
 import (
-	"strings"
-
-	"github.com/go-redis/redis"
+	"github.com/go-redis/redis/v7"
 	"github.com/newrelic/go-agent"
 )
 
@@ -16,14 +14,11 @@ func WrapRedisClient(txn newrelic.Transaction, c *redis.Client) *redis.Client {
 	// clone using context
 	ctx := c.Context()
 	clone := c.WithContext(ctx)
-
-	clone.WrapProcess(func(oldProcess func(cmd redis.Cmder) error) func(cmd redis.Cmder) error {
-		return func(cmd redis.Cmder) error {
-			defer segmentBuilder(txn, newrelic.DatastoreRedis, strings.Split(cmd.Name(), " ")[0]).End()
-
-			return oldProcess(cmd)
-		}
-	})
+	clone.AddHook(
+		newRedisHook{
+			txn: txn,
+		},
+	)
 	return clone
 }
 

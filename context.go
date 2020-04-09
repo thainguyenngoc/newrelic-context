@@ -5,7 +5,7 @@ import (
 
 	"bitbucket.org/snapmartinc/newrelic-context/nrgorm"
 	"bitbucket.org/snapmartinc/newrelic-context/nrredis"
-	"github.com/go-redis/redis"
+	"github.com/go-redis/redis/v7"
 	"github.com/jinzhu/gorm"
 	"github.com/newrelic/go-agent"
 )
