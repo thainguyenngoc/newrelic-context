@@ -1,4 +1,4 @@
-module bitbucket.org/snapmartinc/newrelic-context
+module github.com/best-expendables/newrelic-context
 
 go 1.12
 

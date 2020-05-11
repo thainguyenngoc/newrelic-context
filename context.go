@@ -3,8 +3,8 @@ package nrcontext
 import (
 	"context"
 
-	"bitbucket.org/snapmartinc/newrelic-context/nrgorm"
-	"bitbucket.org/snapmartinc/newrelic-context/nrredis"
+	"github.com/best-expendables/newrelic-context/nrgorm"
+	"github.com/best-expendables/newrelic-context/nrredis"
 	"github.com/go-redis/redis/v8"
 	"github.com/jinzhu/gorm"
 	"github.com/newrelic/go-agent"

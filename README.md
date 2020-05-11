@@ -4,7 +4,7 @@ Contains different helpers to make life easier with NewRelic and Context.
 
 ## Installation
 
-`go get bitbucket.org/snapmartinc/newrelic-context`
+`go get github.com/best-expendables/newrelic-context`
 
 ## In this package:
 
@@ -25,7 +25,7 @@ Use NewRelicMiddleware:
 package main
 
 import (
-    "bitbucket.org/snapmartinc/newrelic-context"
+    "github.com/best-expendables/newrelic-context"
     "log"
     "net/http"
 )
