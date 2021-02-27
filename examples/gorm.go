@@ -2,47 +2,18 @@ package main
 
 import (
 	"github.com/best-expendables/newrelic-context/nrgorm"
-	"fmt"
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	"net/http"
-	nrcontext "newrelic-context"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 var db *gorm.DB
 
 func initDB() *gorm.DB {
-	db, err := gorm.Open("sqlite3", "./foo.db")
+	dsn := "host=%s user=%s port=%d dbname=%s sslmode=disable password=%s"
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic(err)
 	}
 	nrgorm.AddGormCallbacks(db)
 	return db
-}
-
-type Product struct {
-	ID   int
-	Name string
-}
-
-func catalogPage(db *gorm.DB) http.Handler {
-	return http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
-		var products []Product
-		db := nrcontext.SetTxnToGorm(req.Context(), db)
-		db.Find(&products)
-		for i, v := range products {
-			rw.Write([]byte(fmt.Sprintf("%v. %v\n", i, v.Name)))
-		}
-	})
-}
-
-func other_main() {
-	db = initDB()
-	defer db.Close()
-
-	handler := catalogPage(db)
-	nrmiddleware, _ := nrcontext.NewMiddleware("test-app", "my-license-key")
-	handler = nrmiddleware.Handler(handler)
-
-	http.ListenAndServe(":8000", handler)
 }

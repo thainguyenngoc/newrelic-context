@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/jinzhu/gorm"
 	"github.com/newrelic/go-agent"
+	"gorm.io/gorm"
 )
 
 const (
@@ -23,7 +23,7 @@ func SetTxnToGorm(txn newrelic.Transaction, db *gorm.DB) *gorm.DB {
 
 // AddGormCallbacks adds callbacks to NewRelic, you should call SetTxnToGorm to make them work
 func AddGormCallbacks(db *gorm.DB) {
-	dialect := db.Dialect().GetName()
+	dialect := db.Statement.Dialector.Name()
 	var product newrelic.DatastoreProduct
 	switch dialect {
 	case "postgres":
@@ -53,39 +53,39 @@ func newCallbacks(product newrelic.DatastoreProduct) *callbacks {
 	return &callbacks{product}
 }
 
-func (c *callbacks) beforeCreate(scope *gorm.Scope)   { c.before(scope) }
-func (c *callbacks) afterCreate(scope *gorm.Scope)    { c.after(scope, "INSERT") }
-func (c *callbacks) beforeQuery(scope *gorm.Scope)    { c.before(scope) }
-func (c *callbacks) afterQuery(scope *gorm.Scope)     { c.after(scope, "SELECT") }
-func (c *callbacks) beforeUpdate(scope *gorm.Scope)   { c.before(scope) }
-func (c *callbacks) afterUpdate(scope *gorm.Scope)    { c.after(scope, "UPDATE") }
-func (c *callbacks) beforeDelete(scope *gorm.Scope)   { c.before(scope) }
-func (c *callbacks) afterDelete(scope *gorm.Scope)    { c.after(scope, "DELETE") }
-func (c *callbacks) beforeRowQuery(scope *gorm.Scope) { c.before(scope) }
-func (c *callbacks) afterRowQuery(scope *gorm.Scope)  { c.after(scope, "") }
+func (c *callbacks) beforeCreate(db *gorm.DB)   { c.before(db.Statement) }
+func (c *callbacks) afterCreate(db *gorm.DB)    { c.after(db.Statement, "INSERT") }
+func (c *callbacks) beforeQuery(db *gorm.DB)    { c.before(db.Statement) }
+func (c *callbacks) afterQuery(db *gorm.DB)     { c.after(db.Statement, "SELECT") }
+func (c *callbacks) beforeUpdate(db *gorm.DB)   { c.before(db.Statement) }
+func (c *callbacks) afterUpdate(db *gorm.DB)    { c.after(db.Statement, "UPDATE") }
+func (c *callbacks) beforeDelete(db *gorm.DB)   { c.before(db.Statement) }
+func (c *callbacks) afterDelete(db *gorm.DB)    { c.after(db.Statement, "DELETE") }
+func (c *callbacks) beforeRowQuery(db *gorm.DB) { c.before(db.Statement) }
+func (c *callbacks) afterRowQuery(db *gorm.DB)  { c.after(db.Statement, "") }
 
-func (c *callbacks) before(scope *gorm.Scope) {
-	txn, ok := scope.Get(txnGormKey)
+func (c *callbacks) before(s *gorm.Statement) {
+	txn, ok := s.Get(txnGormKey)
 	if !ok {
 		return
 	}
-	scope.Set(startTimeKey, newrelic.StartSegmentNow(txn.(newrelic.Transaction)))
+	s.Set(startTimeKey, newrelic.StartSegmentNow(txn.(newrelic.Transaction)))
 }
 
-func (c *callbacks) after(scope *gorm.Scope, operation string) {
-	startTime, ok := scope.Get(startTimeKey)
+func (c *callbacks) after(s *gorm.Statement, operation string) {
+	startTime, ok := s.Get(startTimeKey)
 	if !ok {
 		return
 	}
 	if operation == "" {
-		operation = strings.ToUpper(strings.Split(scope.SQL, " ")[0])
+		operation = strings.ToUpper(strings.Split(s.SQL.String(), " ")[0])
 	}
 	_ = segmentBuilder(
 		startTime.(newrelic.SegmentStartTime),
 		c.product,
-		scope.SQL,
+		s.SQL.String(),
 		operation,
-		scope.TableName(),
+		s.Table,
 	).End()
 }
 
@@ -107,9 +107,9 @@ func registerCallbacks(db *gorm.DB, name string, c *callbacks) {
 	case "delete":
 		db.Callback().Delete().Before(gormCallbackName).Register(beforeName, c.beforeDelete)
 		db.Callback().Delete().After(gormCallbackName).Register(afterName, c.afterDelete)
-	case "row_query":
-		db.Callback().RowQuery().Before(gormCallbackName).Register(beforeName, c.beforeRowQuery)
-		db.Callback().RowQuery().After(gormCallbackName).Register(afterName, c.afterRowQuery)
+	case "row":
+		db.Callback().Row().Before(gormCallbackName).Register(beforeName, c.beforeRowQuery)
+		db.Callback().Row().After(gormCallbackName).Register(afterName, c.afterRowQuery)
 	}
 }
 

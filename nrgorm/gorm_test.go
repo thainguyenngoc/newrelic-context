@@ -1,13 +1,13 @@
 package nrgorm
 
 import (
-	"github.com/best-expendables/newrelic-context/nrmock"
 	"os"
 	"testing"
 
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"github.com/best-expendables/newrelic-context/nrmock"
+
 	newrelic "github.com/newrelic/go-agent"
+	"gorm.io/gorm"
 )
 
 type Model struct {

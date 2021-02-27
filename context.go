@@ -6,8 +6,8 @@ import (
 	"github.com/best-expendables/newrelic-context/nrgorm"
 	"github.com/best-expendables/newrelic-context/nrredis"
 	"github.com/go-redis/redis/v8"
-	"github.com/jinzhu/gorm"
-	"github.com/newrelic/go-agent"
+	newrelic "github.com/newrelic/go-agent"
+	"gorm.io/gorm"
 )
 
 // Sets transaction from Context to gorm settings, returns cloned DB
@@ -15,7 +15,6 @@ func SetTxnToGorm(ctx context.Context, db *gorm.DB) *gorm.DB {
 	txn := newrelic.FromContext(ctx)
 	return nrgorm.SetTxnToGorm(txn, db)
 }
-
 
 // Gets transaction from Context and applies RedisWrapper, returns cloned client
 func WrapRedisClient(ctx context.Context, c *redis.Client) *redis.Client {
